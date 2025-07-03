@@ -1,0 +1,53 @@
+CREATE TABLE pessoa (
+    id SERIAL PRIMARY KEY,
+    tipo VARCHAR(10) NOT NULL CHECK (tipo IN ('FISICA', 'JURIDICA')),
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100),
+    telefone VARCHAR(20),
+    endereco_id INTEGER REFERENCES enderecos(id)
+);
+
+CREATE TABLE pessoa_fisica (
+    id INTEGER PRIMARY KEY REFERENCES pessoa(id),
+    cpf VARCHAR(14) UNIQUE NOT NULL,
+    data_nascimento DATE
+);
+
+CREATE TABLE pessoa_juridica (
+    id INTEGER PRIMARY KEY REFERENCES pessoa(id),
+    cnpj VARCHAR(18) UNIQUE NOT NULL,
+    razao_social VARCHAR(100)
+);
+
+CREATE TABLE enderecos (
+    id SERIAL PRIMARY KEY,
+    logradouro VARCHAR(100),
+    numero VARCHAR(10),
+    cidade VARCHAR(50),
+    estado VARCHAR(2),
+    cep VARCHAR(10)
+);
+
+CREATE TABLE enderecos (
+    id SERIAL PRIMARY KEY,
+    logradouro VARCHAR(150) NOT NULL,      -- Rua, avenida, etc.
+    numero VARCHAR(20),                     -- Número do local (pode ter letras, ex: 123A)
+    complemento VARCHAR(100),               -- Apartamento, sala, bloco etc.
+    bairro VARCHAR(100),
+    cidade VARCHAR(100) NOT NULL,
+    estado VARCHAR(2) NOT NULL,             -- UF - sigla do estado
+    cep VARCHAR(10),                        -- Código postal
+    pais VARCHAR(50) DEFAULT 'Brasil'      -- País, default Brasil
+);
+
+-- Tabela associativa para ligar endereços a pessoas (física/jurídica) ou clientes, fornecedores etc.
+-- O tipo_destino serve para indicar a qual entidade o endereço pertence
+
+CREATE TABLE endereco_entidade (
+    id SERIAL PRIMARY KEY,
+    endereco_id INTEGER NOT NULL REFERENCES enderecos(id),
+    entidade_id INTEGER NOT NULL,            -- id da pessoa, cliente, fornecedor etc.
+    tipo_entidade VARCHAR(50) NOT NULL,     -- ex: 'pessoa_fisica', 'pessoa_juridica', 'cliente', 'fornecedor'
+    data_inicio DATE DEFAULT CURRENT_DATE,  -- opcional, quando o endereço começou a valer
+    data_fim DATE                           -- opcional, quando o endereço parou de valer
+);
