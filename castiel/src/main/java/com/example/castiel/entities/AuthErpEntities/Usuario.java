@@ -19,11 +19,6 @@ public class Usuario {
     private Long id;
 
     @NotBlank
-    @Size(max = 14)
-    @Column(unique = true)
-    private String cpf;
-
-    @NotBlank
     @Size(max = 150)
     @Column(unique = true)
     private String nome;
@@ -38,4 +33,6 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER; // padrão USER
 
+    public void getRole(Role role) {
+    }
 }

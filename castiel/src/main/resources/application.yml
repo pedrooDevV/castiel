@@ -5,6 +5,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/Castiel-Erp
     username: ${USERNAME_DB}
     password: ${PASSWORD_DB}
+  docker:
+    compose:
+      enabled: false
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -13,7 +16,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  api:
-    security:
-      token:
-        secret: pp
+
+api:
+  security:
+    token:
+      secret: Xn29K!s1A@oQzL$9KeRvJm

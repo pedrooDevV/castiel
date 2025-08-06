@@ -23,16 +23,14 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
-            String token = JWT.create()
+            return JWT.create()
                     .withIssuer("castiel")
                     .withSubject(user.getEmail())
-                    .withExpiresAt(this.generateExpiration())
+                    .withExpiresAt(Instant.now().plusSeconds(3600))
                     .sign(algorithm);
 
-            return token;
-
         } catch (JWTCreationException e) {
-            throw new RuntimeException("Error de criptografia" + e.getMessage());
+            throw new RuntimeException("Erro ao gerar token: " + e.getMessage());
         }
     }
 
@@ -51,7 +49,8 @@ public class TokenService {
     }
 
     private Instant generateExpiration() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-3:00"));
+        return LocalDateTime.now()
+                .plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
     }
 
