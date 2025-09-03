@@ -1,13 +1,14 @@
-package com.example.castiel.services.TI;
+package com.example.castiel.services.RH;
 
 
 import com.example.castiel.DTOs.FuncionarioDTO;
 import com.example.castiel.DTOs.PessoaFisicaDTO;
 import com.example.castiel.DTOs.PessoaJuridicaDTO;
+import com.example.castiel.Enums.StatusFuncionario;
 import com.example.castiel.Exceptions.UsuarioNaoEncontradoException;
-import com.example.castiel.entities.AdmEntities.Funcionario;
-import com.example.castiel.entities.AdmEntities.PessoaFisica;
-import com.example.castiel.entities.AdmEntities.PessoaJuridica;
+import com.example.castiel.entities.RhEntities.Funcionario;
+import com.example.castiel.entities.RhEntities.PessoaFisica;
+import com.example.castiel.entities.RhEntities.PessoaJuridica;
 import com.example.castiel.entities.AuthErpEntities.Usuario;
 import com.example.castiel.repositories.pessoas.FuncionarioRepository;
 import com.example.castiel.repositories.UserRepository;
@@ -18,12 +19,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Service
-public class TiCadastroDePessoaService {
+public class RhCadastroDePessoaService {
 
-    private static final Logger logger = LoggerFactory.getLogger(TiCadastroDePessoaService.class);
+    private static final Logger logger = LoggerFactory.getLogger(RhCadastroDePessoaService.class);
 
     @Autowired
     private PessoaFisicaRepository pessoaFisicaRepository;
@@ -91,12 +93,11 @@ public class TiCadastroDePessoaService {
 
     }
 
-
+    //Esse metodo serve tanto para cadastrar como para atualizar o funcionario.
     public void cadastrarFuncionario(FuncionarioDTO funcionarioDTO){
 
         PessoaFisica pessoa = pessoaFisicaRepository.findByCpf(funcionarioDTO.cpf())
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com CPF: " + funcionarioDTO.cpf()));
-
 
         Funcionario funcionario = new Funcionario();
         funcionario.setNome(funcionarioDTO.nome());
@@ -104,7 +105,14 @@ public class TiCadastroDePessoaService {
         funcionario.setPessoaFisica(pessoa);
         funcionario.setCargo(funcionarioDTO.cargo());
         funcionario.setDataAdmissao(LocalDate.now());
-        funcionario.setSalario(funcionarioDTO.salario());
+        funcionario.setDataDemissao(funcionarioDTO.dataDemissao());
+        funcionario.setSalario(BigDecimal.valueOf(funcionarioDTO.salario()));
+
+        if (funcionario.getDataAdmissao() != null){
+            funcionario.setStatus(StatusFuncionario.ATIVO);
+        } else {
+            funcionario.setStatus(StatusFuncionario.DESATIVADO);
+        }
 
         funcionarioRepository.save(funcionario);
         logger.info("Funcionario criado: nome={}, cpf={}, cargo={}, salario={}",
@@ -113,6 +121,33 @@ public class TiCadastroDePessoaService {
                 funcionario.getCargo(),
                 funcionario.getSalario());
 
+
+    }
+
+    public void atualizarFuncionario(Long id, FuncionarioDTO funcionarioDTO) {
+
+        Funcionario funcionario = funcionarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Funcionario não encontrado"));
+
+        PessoaFisica pessoa = funcionario.getPessoaFisica();
+
+        if (funcionarioDTO.cargo() != null) funcionario.setCargo(funcionarioDTO.cargo());
+
+        if (funcionarioDTO.dataDemissao() != null) {
+            funcionario.setDataDemissao(funcionarioDTO.dataDemissao());
+            funcionario.setStatus(StatusFuncionario.DESATIVADO);
+        }
+
+        if (funcionarioDTO.nome() != null) pessoa.setNome(funcionarioDTO.nome());
+        if (funcionarioDTO.cpf() != null) pessoa.setCpf(funcionarioDTO.cpf());
+
+
+
+        pessoaFisicaRepository.save(pessoa);
+        funcionarioRepository.save(funcionario);
+
+        logger.info("Funcionario atualizado: nome={}, cpf={}, cargo={}",
+                pessoa.getNome(), pessoa.getCpf(), funcionario.getCargo());
     }
 
 }

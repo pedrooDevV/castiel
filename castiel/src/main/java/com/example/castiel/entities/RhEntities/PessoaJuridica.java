@@ -1,4 +1,4 @@
-package com.example.castiel.entities.AdmEntities;
+package com.example.castiel.entities.RhEntities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -22,4 +22,8 @@ public class PessoaJuridica {
     @NotBlank
     @Size(max = 100)
     private String razao_social;
+
+    @NotBlank
+    @Size(max = 100)
+    private String nome_fantasia;
 }

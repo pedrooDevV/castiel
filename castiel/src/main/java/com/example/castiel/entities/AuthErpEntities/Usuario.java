@@ -2,15 +2,21 @@ package com.example.castiel.entities.AuthErpEntities;
 
 
 import com.example.castiel.Enums.Role;
+import com.example.castiel.entities.RhEntities.PessoaFisica;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDate;
 
 @Data
 @Getter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "usuario")
 public class Usuario {
 
@@ -20,8 +26,11 @@ public class Usuario {
 
     @NotBlank
     @Size(max = 150)
-    @Column(unique = true)
     private String nome;
+
+    @NotBlank
+    @Column(name = "cpf",unique = true)
+    private String cpf;
 
     @NotBlank
     @Size(max = 100)
@@ -30,9 +39,16 @@ public class Usuario {
     @NotBlank
     private String senha;
 
-    @Enumerated(EnumType.STRING)
-    private Role role = Role.USER; // padrão USER
+    @CreatedDate
+    @Column(name = "dt_cadastro")
+    private LocalDate dataCadastro;
 
-    public void getRole(Role role) {
-    }
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private PessoaFisica pessoaFisica;
+
+    private LocalDate ultimaTrocaSenha;
+
 }
