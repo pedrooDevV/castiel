@@ -6,7 +6,7 @@ import com.example.castiel.DTOs.LoginResponseDTO;
 import com.example.castiel.DTOs.RegisterRequestDTO;
 import com.example.castiel.entities.AuthErpEntities.Usuario;
 import com.example.castiel.repositories.UserRepository;
-import com.example.castiel.services.Security.TokenService;
+import com.example.castiel.security.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +28,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO body) {
         Optional<Usuario> usuarioOpt = userRepository.findByNome(body.nome());
+
 
         if (usuarioOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

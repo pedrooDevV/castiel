@@ -10,6 +10,7 @@ public class CastielApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CastielApplication.class, args);
+
 	}
 
 }

@@ -22,7 +22,9 @@ public class PontoEletronico {
     @Column(name = "dt_trabalhada")
     private LocalDateTime dataHora;
 
-    @NotBlank
+    @Column(name = "horas_trabalhadas")
+    private long horas_trabalhadas;
+
     @Enumerated(EnumType.STRING)
     private Tipo tipo;
 

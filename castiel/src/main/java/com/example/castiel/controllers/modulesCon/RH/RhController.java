@@ -3,7 +3,9 @@ package com.example.castiel.controllers.modulesCon.RH;
 import com.example.castiel.DTOs.FuncionarioDTO;
 import com.example.castiel.DTOs.PessoaFisicaDTO;
 import com.example.castiel.DTOs.PessoaJuridicaDTO;
+import com.example.castiel.DTOs.PontoEletronicoDTO;
 import com.example.castiel.services.RH.RhCadastroDePessoaService;
+import com.example.castiel.services.RH.RhPontoEletronicoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/rh")
 public class RhController {
+
+    @Autowired
+    private RhPontoEletronicoService rhPontoEletronicoService;
 
     @Autowired
     private RhCadastroDePessoaService rhCadastroDePessoaService;
@@ -64,10 +69,10 @@ public class RhController {
     @PutMapping("/atualizar/funcionario/{id}")
     public ResponseEntity<Map<String, String>> atualizarFuncionario(@RequestBody FuncionarioDTO funcionarioDTO, @PathVariable Long id) {
         try {
-            rhCadastroDePessoaService.atualizarFuncionario(id ,funcionarioDTO);
+            rhCadastroDePessoaService.atualizarFuncionario(id, funcionarioDTO);
             log.info("Atualização de funcionário realizado com sucesso. CPF={}, Nome={}",
                     funcionarioDTO.cpf(), funcionarioDTO.nome());
-            return ResponseEntity.status(201).body(Map.of("message","Funcionário atualizado com sucesso"));
+            return ResponseEntity.status(201).body(Map.of("message", "Funcionário atualizado com sucesso"));
 
         } catch (RuntimeException e) {
             log.error("Não foi possivel atualizar o funcionário CPF={} Erro={}",
@@ -75,8 +80,21 @@ public class RhController {
             return ResponseEntity.status(500).body(Map.of("error", " Erro ao atualizar funcionario " + e.getMessage()
             ));
         }
-
-
-
     }
+
+    @PostMapping("/registrar-ponto")
+    public ResponseEntity<PontoEletronicoDTO> registra_ponto(@RequestBody PontoEletronicoDTO pontoEletronicoDTO) {
+        try {
+            PontoEletronicoDTO response = rhPontoEletronicoService.RegistrarPonto(pontoEletronicoDTO);
+            return ResponseEntity.status(201).body(response);
+        } catch (RuntimeException e) {
+            log.error("Erro ao salvar ponto para CPF={}: {}", pontoEletronicoDTO.cpf(), e.getMessage(), e);
+            return ResponseEntity.status(500).body(
+                    new PontoEletronicoDTO("Erro ao salvar ponto: " + e.getMessage(), pontoEletronicoDTO.cpf(), null, null, pontoEletronicoDTO.horasTrabalhadas(), null)
+            );
+        }
+    }
+
 }
+
+

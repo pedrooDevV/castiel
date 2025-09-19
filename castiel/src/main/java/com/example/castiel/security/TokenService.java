@@ -1,4 +1,4 @@
-package com.example.castiel.services.Security;
+package com.example.castiel.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

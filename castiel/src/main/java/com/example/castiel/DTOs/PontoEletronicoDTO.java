@@ -8,8 +8,8 @@ public record PontoEletronicoDTO(
 
         String cpf,
         String nome,
-        LocalDateTime dataHora,
-        Tipo tipo
+        String pedro, LocalDateTime dataHora,
+        long horasTrabalhadas, Tipo tipo
 
 
 ) {

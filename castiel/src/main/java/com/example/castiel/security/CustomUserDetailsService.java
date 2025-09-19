@@ -1,4 +1,4 @@
-package com.example.castiel.services.Security;
+package com.example.castiel.security;
 
 import com.example.castiel.entities.AuthErpEntities.Usuario;
 import com.example.castiel.repositories.UserRepository;
